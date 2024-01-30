@@ -12,7 +12,9 @@ class NotOrdered(Exception):
 
 class ArrayList:
     def __init__(self):
+        self.__size = 16
         # TODO: remove 'pass' and implement functionality
+        self.arr = [0] * self.__size
         pass
 
     #Time complexity: O(n) - linear time in size of list
