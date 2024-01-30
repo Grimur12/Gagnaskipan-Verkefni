@@ -9,9 +9,19 @@ def modulus(a, b):  # ONLY NEEDS TO WORK FOR POSITIVE INTEGERS
 
 def how_many(lis1, lis2):
     #TODO: remove 'pass' and implement functionality
-    
-    pass
+    # nota lis1 sem use-case listann
+    # Taka aftasta stakið í honum ef hann er í lis2 þá match +1
+    # nota recursion s.s kalla aftur á fallið nema núna með einu færra síðasta staki í lis1
 
+    if len(lis1) == 0:
+        return 0
+    
+    if lis1[-1] in lis2:
+        matches = 1
+    else:
+        matches = 0
+
+    return matches + how_many(lis1[:-1],lis2)
 
 # FEEL FREE TO EDIT THE TESTS AND MAKE THEM BETTER
 # REMEMBER EDGE CASES!
