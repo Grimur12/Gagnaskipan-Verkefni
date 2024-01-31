@@ -15,6 +15,8 @@ class ArrayList:
     def __init__(self):
         self.size = 0 # Byrjar á að vera 0
         self.arr = [0] * self.size
+        # Kennarinn segir í videoinu að maður ætti kanski að hafa capacity og size kanski byrja a capacity = 4
+        # Þá þegar size == capacity þá resize() og resize stækkar capacity og þa getum við haldið áfram
 
     #Time complexity: O(n) - linear time in size of list
     def __str__(self):
@@ -150,7 +152,7 @@ class ArrayList:
         # síðan overridea stakið sem er á indexinum fyrir næsta stak
         # Þannig for i in range(index, self.size - 1) og siðan self.arr[i] = self.arr[i+1] síðan þarf að minka size um 1, kanski má þetta ekki, veit ekki hvort það megi hafa for loopur
         # Önnur leið væri að bara slicea listann uppað indexinu og frá indexinu og bæta saman
-        # self.arr = self.arr[:index] + self.arr[index+1:] og síðan taka 1 fra size, self.size -= 1
+        # self.arr = self.arr[:index] + self.arr[index+1:] og síðan taka 1 fra size, self.size -= 1, held að þetta megi ekki
         
         for i in range(index, self.size - 1):
             self.arr[i] = self.arr[i+1]
