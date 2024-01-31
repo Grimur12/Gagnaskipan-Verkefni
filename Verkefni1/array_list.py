@@ -11,6 +11,7 @@ class NotOrdered(Exception):
     pass
 
 class ArrayList:
+
     def __init__(self):
         self.size = 0 # Byrjar á að vera 0
         self.arr = [0] * self.size
@@ -28,7 +29,8 @@ class ArrayList:
         # Nota insert fallið til að prependa 
         # eithvað eins og self.insert(value, 0)
         self.insert(value,0)
-        
+
+        ## Virkar        
 
     #Time complexity: O(n) - linear time in size of list
     def insert(self, value, index):
@@ -73,39 +75,54 @@ class ArrayList:
 
         self.size += 1
 
+        ## Virkar
+
     #Time complexity: O(1) - constant time
     def append(self, value):
         # Sama og með prepend
         # self.insert(value,self.size) # setja stakið aftast á arrayið
+
         self.insert(value,self.size)
+
+        ## Virkar
 
     #Time complexity: O(1) - constant time
     def set_at(self, value, index):
         # Getum sliceað arrayið og sett í staðin
         # self.arr[index] = value
         # if index < 0 eða > self.size þá raise IndexOutOfBounds()
-        pass
+
+        self.arr[index] = value
+
+        ## Virkar
 
     #Time complexity: O(1) - constant time
     def get_first(self):
         # Slicea arrayið
         # return self.arr[0] 
         # if self.size (stærðin á arrayinu) == 0 þá raise Empty()
-        pass
+        return self.arr[0]
+    
+        ## Virkar
 
     #Time complexity: O(1) - constant time
     def get_at(self, index):
         # slicea arrayið
         # getum gert sama og í set_at s.s if index < 0 eða > self.size þá raise IndexOutOfBounds()
         # return self.arr[index]
-        pass
+        
+        return self.arr[index]
+    
+        ## Virkar
 
     #Time complexity: O(1) - constant time
     def get_last(self):
         # Slicea arrayið
         # getum gert sama og í get_first s.s if self.size (stærðin á arrayinu) == 0 þá raise Empty()
         # return self.arr[-1] eða self.arr[self.size -1] ef [-1] er ekki leyfilegt held að það sé það samt
-        pass
+        return self.arr[-1]
+        
+        ## Virkar
 
     #Time complexity: O(n) - linear time in size of list
     def resize(self):
@@ -123,6 +140,8 @@ class ArrayList:
         # for loopa yfir gamla arrayið ? kanski má það ekki.. new_array[i] = self.array[i]
         # Síðan overridea self.array, sef.array = new_array
 
+        ## Virkar
+
     #Time complexity: O(n) - linear time in size of list
     def remove_at(self, index):
         # Sama og get_at
@@ -132,13 +151,20 @@ class ArrayList:
         # Þannig for i in range(index, self.size - 1) og siðan self.arr[i] = self.arr[i+1] síðan þarf að minka size um 1, kanski má þetta ekki, veit ekki hvort það megi hafa for loopur
         # Önnur leið væri að bara slicea listann uppað indexinu og frá indexinu og bæta saman
         # self.arr = self.arr[:index] + self.arr[index+1:] og síðan taka 1 fra size, self.size -= 1
-        pass
+        
+        for i in range(index, self.size - 1):
+            self.arr[i] = self.arr[i+1]
+        
+        self.size -= 1
+
+        ## Virkar
+
 
     #Time complexity: O(1) - constant time
     def clear(self):
-        # Búa til nýtt self.arr ??
-        # og svo self.size = 0 
-        pass
+        self.size = 0
+        
+        ## Virkar
 
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
@@ -167,4 +193,17 @@ if __name__ == "__main__":
     arr_lis.append(4)
     arr_lis.prepend(6)
     arr_lis.insert(9,2)
+    arr_lis.set_at(5,3)
     print(str(arr_lis))
+    print(arr_lis.get_first())
+    print(arr_lis.get_last())
+    print(arr_lis.get_at(2))
+    print(arr_lis)
+    arr_lis.remove_at(2)
+    print(arr_lis)
+    arr_lis.append(3)
+    print(arr_lis)
+    arr_lis.insert("Value",2)
+    print(arr_lis)
+    arr_lis.clear()
+    print(arr_lis, "Cleared")
