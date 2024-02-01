@@ -219,4 +219,4 @@ if __name__ == "__main__":
     my_list.append(6)
     my_list.insert_ordered(5)
     print(my_list)
-    print(my_list.find(6))
+    print(my_list.find(5))
