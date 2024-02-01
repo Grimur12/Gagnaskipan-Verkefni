@@ -24,7 +24,10 @@ class ArrayList:
         # Bara til að byrja með til að geta testað allt dótið, ég held að þetta megi ekki
         ret_str = ""
         for i in range(self.size):
-            ret_str = ret_str + " " + str(self.arr[i])
+            if i != self.size-1:
+                ret_str = ret_str + str(self.arr[i]) + " , "
+            else:
+                ret_str = ret_str + str(self.arr[i])
         return ret_str
 
     #Time complexity: O(n) - linear time in size of list
@@ -178,13 +181,27 @@ class ArrayList:
 
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
-        # TODO: remove 'pass' and implement functionality
+        # Er manneskjan alltaf að setja inn hærri tölu
+        # Eða þarf að leita í arrayinu eftir réttum stað fyrir töluna og siðan insert() ?
+        # Gera fall sem tjékkar hvort i+1 < i
         pass
 
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
-        # TODO: remove 'pass' and implement functionality
+        # Ef Arrayið er sorted þá recursive binary search
+        # Ef arrayið er ekki sorted þá linear
+        # Má bæta við function i klasann sem er lin search og bin search og ordered checker ?
+        """
+        def Linear_Search(lis, value):
+            if not lis:
+                return False
+            
+            if lis[0] == value:
+                return True
+        
+            return Linear_Search(lis[1:],value)
+        """
         pass
 
     #Time complexity: O(n) - linear time in size of list
