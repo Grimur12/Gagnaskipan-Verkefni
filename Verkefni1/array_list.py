@@ -181,32 +181,48 @@ class ArrayList:
     def clear(self):
         self.size = 0
         
-        ## Virkar
+         ## Virkar
+    #     def Linear_Search(lis, value, index = 0):
+    # if lis:
+    #     if lis[0] == value:
+    #         return index
+    #     checker = Linear_Search(lis[1:],value, (index + 1))
+    #     if checker is not False:
+    #         return checker
 
-    def Linear_Search(self, value):
-        if not self.arr:
-            return False
-        
-        if self.arr[0] == value:
-            return True
+    # return False
+
+    def Linear_Search(self, array, value, index = 0):
+        if array:
+            if array[0] == value:
+                return index
+            checker = self.Linear_Search(array[1:],value, (index + 1))
+            if checker is not False:
+                return checker
     
-        return self.Linear_Search(self.arr[1:], value)
+        return False
 
-    def Binary_search(self, value):
+    def Binary_search(self, array, value, size, index = 0):
+        temp_size = size
     # Base case: if the string is empty, the element is not found
         if not value:
             return False
         else:
             # Calculate the mid index and compare the middle element with the target
-            mid = self.size // 2
-            if self.arr[mid] == value:
-                return True
-            elif self.arr[mid] > value:
+            mid = temp_size // 2
+            temp_size = temp_size // 2
+            print("arr",array)
+            print("size",temp_size)
+            print("mid",mid)
+            print("index",index)
+            if array[mid] == value:
+                return index
+            elif array[mid] > value:
                 # Recursive case: search in the left half of the string
-                return self.Binary_search(self.arr[:mid], value)
+                return self.Binary_search(array[:mid], value, temp_size, (index + mid))
             else:
                 # Recursive case: search in the right half of the string
-                return self.Binary_search(self.arr[mid+1:], value)
+                return self.Binary_search(array[mid+1:], value, temp_size, (index))
 
     def check_ordered(self):
         for i in range(self.size-1):
@@ -217,19 +233,44 @@ class ArrayList:
 
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
+        if not self.check_ordered():
+            raise NotOrdered()
+
+        for i in range(self.size):
+            if self.arr[i] > value:
+                self.insert(value,i)
+
+        # 1,2,3,4,6,7  setja inn 5
+        
         # Er manneskjan alltaf að setja inn hærri tölu
         # Eða þarf að leita í arrayinu eftir réttum stað fyrir töluna og siðan insert() ?
         # Gera fall sem tjékkar hvort i+1 < i
-        pass
+        
+        ## Virkar
+
 
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
+        if self.check_ordered():
+            if self.Binary_search(self.arr, value, self.size):
+                print("Binary")
+                return self.Binary_search(self.arr, value, self.size)
+            else:
+                raise NotFound()
+        else:
+            if self.Linear_Search(self.arr,value): 
+                print("Linear")   
+                return self.Linear_Search(self.arr,value)
+            else:
+                raise NotFound()
+        
+        
+
         # Ef Arrayið er sorted þá recursive binary search
         # Ef arrayið er ekki sorted þá linear
         # Má bæta við function i klasann sem er lin search og bin search og ordered checker ?
-    
-        pass
+
 
     #Time complexity: O(n) - linear time in size of list
     def remove_value(self, value):
@@ -261,3 +302,30 @@ if __name__ == "__main__":
     print(arr_lis)
     arr_lis.clear()
     print(arr_lis, "Cleared")
+    arr_lis.append(1)
+    arr_lis.append(2)
+    arr_lis.append(3)
+    arr_lis.append(4)
+    arr_lis.append(6)
+    arr_lis.insert_ordered(5)
+    print(arr_lis)
+    print(arr_lis.find(4))
+
+def binary_search(lis, value, size, index = 0):
+    temp_size = size
+    mid = temp_size // 2
+    temp_size = temp_size // 2
+    if lis[mid] == value:
+        return index + mid
+    elif value > lis[mid]:
+        return binary_search(lis[mid+1:size], value, temp_size, index + mid + 1)
+    elif value < lis[mid]:
+        return binary_search(lis[0:mid], value, temp_size, index)  
+    else:
+        return False
+
+listi = [1,2,3,4,5,6]
+size = len(lis)
+val = 6
+print("bin")
+print(binary_search(listi,val,size))
