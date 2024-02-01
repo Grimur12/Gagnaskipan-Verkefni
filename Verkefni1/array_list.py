@@ -190,7 +190,7 @@ class ArrayList:
         if self.arr[0] == value:
             return True
     
-        return Linear_Search(self.arr[1:], value)
+        return self.Linear_Search(self.arr[1:], value)
 
     def Binary_search(self, value):
     # Base case: if the string is empty, the element is not found
@@ -203,10 +203,10 @@ class ArrayList:
                 return True
             elif self.arr[mid] > value:
                 # Recursive case: search in the left half of the string
-                return Binary_search(self.arr[:mid], value)
+                return self.Binary_search(self.arr[:mid], value)
             else:
                 # Recursive case: search in the right half of the string
-                return Binary_search(self.arr[mid+1:], value)
+                return self.Binary_search(self.arr[mid+1:], value)
 
     def check_ordered(self):
         for i in range(self.size-1):
