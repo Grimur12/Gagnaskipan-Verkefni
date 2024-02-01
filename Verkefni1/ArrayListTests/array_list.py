@@ -98,24 +98,39 @@ class ArrayList:
         # TODO: remove 'pass' and implement functionality
         if index < 0 or index > self.size:
             raise IndexOutOfBounds()
-        for i in range(index, self.size -1):
+        for i in range(index, self.size - 1):
             self.arr[i] = self.arr[i+1]
 
     #Time complexity: O(1) - constant time
     def clear(self):
         # TODO: remove 'pass' and implement functionality
+        # Removes all items from the list
+        self.size = 0
+
+    def binary_search(self, value):
+        if self.arr == "":
+            return False
+        else:
+            mid = self.arr // 2
+            if self.arr[mid] == value:
+                return True
+            elif self.arr[mid] > value:
+                
         
 
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if ArrayList.is_ordered(self) == False:
+            raise NotOrdered()
+        self.insert(value, self.size)
+
 
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
         # TODO: remove 'pass' and implement functionality
-        pass
+        
 
     #Time complexity: O(n) - linear time in size of list
     def remove_value(self, value):
@@ -135,7 +150,7 @@ if __name__ == "__main__":
     arr_lis.append(4)
     arr_lis.prepend(6)
     arr_lis.insert(9,2)
-    arr_lis.set_at(5,3)
+    arr_lis.set_at(1, 2)
     print(str(arr_lis))
     print(arr_lis.get_first())
     print(arr_lis.get_last())
@@ -151,18 +166,3 @@ if __name__ == "__main__":
     print(arr_lis, "Cleared")
 
 
-def binary_search(s, x):
-    # Base case: if the string is empty, the element is not found
-    if s == "":
-        return False
-    else:
-        # Calculate the mid index and compare the middle element with the target
-        mid = len(s) // 2
-        if s[mid] == x:
-            return True
-        elif s[mid] > x:
-            # Recursive case: search in the left half of the string
-            return binary_search(s[:mid], x)
-        else:
-            # Recursive case: search in the right half of the string
-            return binary_search(s[mid+1:], x)
