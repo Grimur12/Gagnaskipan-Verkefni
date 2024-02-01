@@ -15,6 +15,7 @@ class ArrayList:
     def __init__(self):
         self.size = 0 # Byrjar á að vera 0
         self.arr = [0] * self.size
+        
         # Kennarinn segir í videoinu að maður ætti kanski að hafa capacity og size kanski byrja a capacity = 4
         # Þá þegar size == capacity þá resize() og resize stækkar capacity og þa getum við haldið áfram
 
@@ -93,6 +94,8 @@ class ArrayList:
         # Getum sliceað arrayið og sett í staðin
         # self.arr[index] = value
         # if index < 0 eða > self.size þá raise IndexOutOfBounds()
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
 
         self.arr[index] = value
 
@@ -103,6 +106,8 @@ class ArrayList:
         # Slicea arrayið
         # return self.arr[0] 
         # if self.size (stærðin á arrayinu) == 0 þá raise Empty()
+        if self.size == 0:
+            raise Empty()
         return self.arr[0]
     
         ## Virkar
@@ -112,6 +117,9 @@ class ArrayList:
         # slicea arrayið
         # getum gert sama og í set_at s.s if index < 0 eða > self.size þá raise IndexOutOfBounds()
         # return self.arr[index]
+
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
         
         return self.arr[index]
     
