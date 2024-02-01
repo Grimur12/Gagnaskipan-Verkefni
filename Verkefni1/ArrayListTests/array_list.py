@@ -21,6 +21,9 @@ class ArrayList:
     def __str__(self):
         # TODO: remove 'pass' and implement functionality
         return_string = ""
+        for i in range(self.size):
+            return_string += str(self.arr[i]) + ", "
+        return_string += str(self.arr[self.size])
         return return_string
 
     #Time complexity: O(n) - linear time in size of list
@@ -31,7 +34,16 @@ class ArrayList:
     #Time complexity: O(n) - linear time in size of list
     def insert(self, value, index):
         # TODO: remove 'pass' and implement functionality
-        pass
+        # Inserts an item into the list at a specific location, not overwriting other items
+        # If the index is not within the current list, raise IndexOutOfBounds()
+        # It should be possible to add to the front and back of the list, and anywhere in between
+        self.resize()
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
+        for i in range(self.size, index, -1):
+            self.arr[i] = self.arr[i-1]
+            self.arr[index] = value
+            self.size += 1
 
     #Time complexity: O(1) - constant time
     def append(self, value):
@@ -44,22 +56,31 @@ class ArrayList:
     #Time complexity: O(1) - constant time
     def set_at(self, value, index):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
+        self.arr[index] = value
 
     #Time complexity: O(1) - constant time
     def get_first(self):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if self.size == 0:
+            raise Empty()
+        return self.arr[0]
+
 
     #Time complexity: O(1) - constant time
     def get_at(self, index):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
+        return self.arr[index]
 
     #Time complexity: O(1) - constant time
     def get_last(self):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if self.size == 0:
+            raise Empty()
+        return self.arr[self.size - 1]
 
     #Time complexity: O(n) - linear time in size of list
     def resize(self):
@@ -75,12 +96,15 @@ class ArrayList:
     #Time complexity: O(n) - linear time in size of list
     def remove_at(self, index):
         # TODO: remove 'pass' and implement functionality
-        pass
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
+        for i in range(index, self.size -1):
+            self.arr[i] = self.arr[i+1]
 
     #Time complexity: O(1) - constant time
     def clear(self):
         # TODO: remove 'pass' and implement functionality
-        pass
+        
 
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
@@ -104,6 +128,41 @@ if __name__ == "__main__":
     # add your tests here or in a different file.
     # Do not add them outside this if statement
     # and make sure they are at this indent level
-
+  
+  
     arr_lis = ArrayList()
+    arr_lis.insert(3,0)
+    arr_lis.append(4)
+    arr_lis.prepend(6)
+    arr_lis.insert(9,2)
+    arr_lis.set_at(5,3)
     print(str(arr_lis))
+    print(arr_lis.get_first())
+    print(arr_lis.get_last())
+    print(arr_lis.get_at(2))
+    print(arr_lis)
+    arr_lis.remove_at(2)
+    print(arr_lis)
+    arr_lis.append(3)
+    print(arr_lis)
+    arr_lis.insert("Value",2)
+    print(arr_lis)
+    arr_lis.clear()
+    print(arr_lis, "Cleared")
+
+
+def binary_search(s, x):
+    # Base case: if the string is empty, the element is not found
+    if s == "":
+        return False
+    else:
+        # Calculate the mid index and compare the middle element with the target
+        mid = len(s) // 2
+        if s[mid] == x:
+            return True
+        elif s[mid] > x:
+            # Recursive case: search in the left half of the string
+            return binary_search(s[:mid], x)
+        else:
+            # Recursive case: search in the right half of the string
+            return binary_search(s[mid+1:], x)
