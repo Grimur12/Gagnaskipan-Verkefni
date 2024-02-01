@@ -13,13 +13,11 @@ class NotOrdered(Exception):
 class ArrayList:
 
     def __init__(self):
+
         self.size = 0
         self.capacity = 4
         self.arr = [None] * self.capacity
         
-        # Kennarinn segir í videoinu að maður ætti kanski að hafa capacity og size kanski byrja a capacity = 4
-        # Þá þegar size == capacity þá resize() og resize stækkar capacity og þa getum við haldið áfram
-
     #Time complexity: O(n) - linear time in size of list
     def __str__(self):
         # Bara til að byrja með til að geta testað allt dótið, ég held að þetta megi ekki
@@ -33,46 +31,13 @@ class ArrayList:
 
     #Time complexity: O(n) - linear time in size of list
     def prepend(self, value):
-        # Nota insert fallið til að prependa 
-        # eithvað eins og self.insert(value, 0)
+
         self.insert(value,0)
 
         ## Virkar        
 
     #Time complexity: O(n) - linear time in size of list
     def insert(self, value, index):
-        # þarf að innihalda if index < 0 eða > self.size þá raise IndexOutOfBounds()
-        # Ef það á að inserta í arrayið þá þýðir það að það er verið að stækka það, erum með function resize sem á að gera það
-        # ef við stækkum alltaf listann um +1 í resize þá gætum við alltaf bara kallað á það í þessu falli
-        # Pæling hvort maður ætti þá að hækka size um +1 í þessu falli eða í resize
-        # í lokinn á insert þarf að bæta 1 við size , self.size += 1
-        
-        """
-        def resize(array):
-            array.append(0)
-            return array
-
-        def insert(array, value, index, size):
-            array = resize(array)
-            for i in range(size, index, -1):
-                array[i] = array[i - 1]
-
-            array[index] = value
-            return array
-
-        arr = [1,2,3,4,5,6,7,8,9,10]
-        arr = insert(arr,23,4,len(arr))
-        print(arr)
-        """
-        # Þetta myndi virka, köllum á resize() fyrst
-        # Ættum að fá nýjann array með auka 0 aftaná megum ekki nota append í þessu samt
-        # Ef við erum alltaf með síðasta stakið 0 aftast þá iterateum við í gegnum arrayið
-        # byrjum á aftasta sem væri þá size, niðri indexinn sem við viljum breyta, og förum alltaf 1 skref til baka með -1
-        # Overrideum síðan stakið sem er á i s.s aftast með stakinu sem er á bavkið þannig hverfur 0'ið aftast og á endanum verður auka stak í indexinum sem við viljum
-        # Þá bara overridea það sér með self.arr[index] = value
-        # Virkar bara ef resize hefur 0 aftaná
-        # síðan self.size += 1
-
         if self.size == self.capacity:
             self.resize()
             
@@ -87,18 +52,13 @@ class ArrayList:
 
     #Time complexity: O(1) - constant time
     def append(self, value):
-        # Sama og með prepend
-        # self.insert(value,self.size) # setja stakið aftast á arrayið
-
+  
         self.insert(value,self.size)
 
         ## Virkar
 
     #Time complexity: O(1) - constant time
     def set_at(self, value, index):
-        # Getum sliceað arrayið og sett í staðin
-        # self.arr[index] = value
-        # if index < 0 eða > self.size þá raise IndexOutOfBounds()
         if index < 0 or index > self.size:
             raise IndexOutOfBounds()
 
@@ -108,9 +68,6 @@ class ArrayList:
 
     #Time complexity: O(1) - constant time
     def get_first(self):
-        # Slicea arrayið
-        # return self.arr[0] 
-        # if self.size (stærðin á arrayinu) == 0 þá raise Empty()
         if self.size == 0:
             raise Empty()
         return self.arr[0]
@@ -119,10 +76,6 @@ class ArrayList:
 
     #Time complexity: O(1) - constant time
     def get_at(self, index):
-        # slicea arrayið
-        # getum gert sama og í set_at s.s if index < 0 eða > self.size þá raise IndexOutOfBounds()
-        # return self.arr[index]
-
         if index < 0 or index > self.size:
             raise IndexOutOfBounds()
         
@@ -132,9 +85,7 @@ class ArrayList:
 
     #Time complexity: O(1) - constant time
     def get_last(self):
-        # Slicea arrayið
-        # getum gert sama og í get_first s.s if self.size (stærðin á arrayinu) == 0 þá raise Empty()
-        # return self.arr[-1] eða self.arr[self.size -1] ef [-1] er ekki leyfilegt held að það sé það samt
+
         return self.arr[-1]
         
         ## Virkar
@@ -149,23 +100,10 @@ class ArrayList:
 
         self.arr = new_arr
 
-        # stækka arrayið sé ekki hvort það standi hversu mikið það eigi að vera
-        # gera nýtt array
-        # new_arr = [0] * (1+self.size eða hversu mikið hann á að stækka um)
-        # for loopa yfir gamla arrayið ? kanski má það ekki.. new_array[i] = self.array[i]
-        # Síðan overridea self.array, sef.array = new_array
-
         ## Virkar
 
     #Time complexity: O(n) - linear time in size of list
     def remove_at(self, index):
-        # Sama og get_at
-        # Slicea arrayið
-        # Gætum búið til for lykkju sem fer yfir allt arrayið frá indexinum sem við viljum taka stakið frá og uppí endann eða næst síðasta stakið afþví við erum að taka 1 í burtu
-        # síðan overridea stakið sem er á indexinum fyrir næsta stak
-        # Þannig for i in range(index, self.size - 1) og siðan self.arr[i] = self.arr[i+1] síðan þarf að minka size um 1, kanski má þetta ekki, veit ekki hvort það megi hafa for loopur
-        # Önnur leið væri að bara slicea listann uppað indexinu og frá indexinu og bæta saman
-        # self.arr = self.arr[:index] + self.arr[index+1:] og síðan taka 1 fra size, self.size -= 1, held að þetta megi ekki
         if index < 0 or index > self.size:
             raise IndexOutOfBounds()
 
@@ -181,16 +119,6 @@ class ArrayList:
     def clear(self):
         self.size = 0
         
-         ## Virkar
-    #     def Linear_Search(lis, value, index = 0):
-    # if lis:
-    #     if lis[0] == value:
-    #         return index
-    #     checker = Linear_Search(lis[1:],value, (index + 1))
-    #     if checker is not False:
-    #         return checker
-
-    # return False
 
     def Linear_Search(self, array, value, index = 0):
         if array:
@@ -202,33 +130,31 @@ class ArrayList:
     
         return False
 
+        ## Virkar
+
     def Binary_search(self, array, value, size, index = 0):
-        temp_size = size
-    # Base case: if the string is empty, the element is not found
-        if not value:
+        if size <= 0:
             return False
+        
+        mid = size // 2
+        if array[mid] == value:
+            return index + mid
+        elif value > array[mid]:
+            return self.Binary_search(array[mid + 1 :], value, size - mid - 1, index + mid + 1)
+        elif value < array[mid]:
+            return self.Binary_search(array[:mid], value, mid, index)
         else:
-            # Calculate the mid index and compare the middle element with the target
-            mid = temp_size // 2
-            temp_size = temp_size // 2
-            print("arr",array)
-            print("size",temp_size)
-            print("mid",mid)
-            print("index",index)
-            if array[mid] == value:
-                return index
-            elif array[mid] > value:
-                # Recursive case: search in the left half of the string
-                return self.Binary_search(array[:mid], value, temp_size, (index + mid))
-            else:
-                # Recursive case: search in the right half of the string
-                return self.Binary_search(array[mid+1:], value, temp_size, (index))
+            return False
+
+        ## Virkar
 
     def check_ordered(self):
         for i in range(self.size-1):
             if self.arr[i] > self.arr[i+1]:
                 return False
         return True
+    
+        ## Virkar
             
 
     #Time complexity: O(n) - linear time in size of list
@@ -239,12 +165,6 @@ class ArrayList:
         for i in range(self.size):
             if self.arr[i] > value:
                 self.insert(value,i)
-
-        # 1,2,3,4,6,7  setja inn 5
-        
-        # Er manneskjan alltaf að setja inn hærri tölu
-        # Eða þarf að leita í arrayinu eftir réttum stað fyrir töluna og siðan insert() ?
-        # Gera fall sem tjékkar hvort i+1 < i
         
         ## Virkar
 
@@ -253,29 +173,25 @@ class ArrayList:
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
         if self.check_ordered():
-            if self.Binary_search(self.arr, value, self.size):
-                print("Binary")
-                return self.Binary_search(self.arr, value, self.size)
+            binary_index = self.Binary_search(self.arr, value, self.size)
+            if binary_index is not False:
+                return binary_index
             else:
                 raise NotFound()
         else:
-            if self.Linear_Search(self.arr,value): 
-                print("Linear")   
-                return self.Linear_Search(self.arr,value)
+            linear_index = self.Linear_Search(self.arr,value)
+            if linear_index is not False:
+                return linear_index  
             else:
                 raise NotFound()
-        
-        
-
-        # Ef Arrayið er sorted þá recursive binary search
-        # Ef arrayið er ekki sorted þá linear
-        # Má bæta við function i klasann sem er lin search og bin search og ordered checker ?
-
 
     #Time complexity: O(n) - linear time in size of list
     def remove_value(self, value):
-        # TODO: remove 'pass' and implement functionality
-        pass
+
+        index = self.find(value)
+        
+        return self.remove_at(index)
+
 
 
 if __name__ == "__main__":
@@ -300,6 +216,7 @@ if __name__ == "__main__":
     print(arr_lis)
     arr_lis.insert("Value",2)
     print(arr_lis)
+    print(arr_lis.find(3))
     arr_lis.clear()
     print(arr_lis, "Cleared")
     arr_lis.append(1)
@@ -307,25 +224,13 @@ if __name__ == "__main__":
     arr_lis.append(3)
     arr_lis.append(4)
     arr_lis.append(6)
+    arr_lis.append(7)
+    arr_lis.append(8)
+    arr_lis.append(9)
+    arr_lis.append(10)
+    arr_lis.append(11)
     arr_lis.insert_ordered(5)
     print(arr_lis)
-    print(arr_lis.find(4))
-
-def binary_search(lis, value, size, index = 0):
-    temp_size = size
-    mid = temp_size // 2
-    temp_size = temp_size // 2
-    if lis[mid] == value:
-        return index + mid
-    elif value > lis[mid]:
-        return binary_search(lis[mid+1:size], value, temp_size, index + mid + 1)
-    elif value < lis[mid]:
-        return binary_search(lis[0:mid], value, temp_size, index)  
-    else:
-        return False
-
-listi = [1,2,3,4,5,6]
-size = len(lis)
-val = 6
-print("bin")
-print(binary_search(listi,val,size))
+    print(arr_lis.find(3))
+    arr_lis.remove_value(8)
+    print(arr_lis)
