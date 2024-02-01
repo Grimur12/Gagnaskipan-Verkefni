@@ -13,8 +13,9 @@ class NotOrdered(Exception):
 class ArrayList:
 
     def __init__(self):
-        self.size = 0 # Byrjar á að vera 0
-        self.arr = [0] * self.size
+        self.size = 0
+        self.capacity = 4
+        self.arr = [None] * self.capacity
         
         # Kennarinn segir í videoinu að maður ætti kanski að hafa capacity og size kanski byrja a capacity = 4
         # Þá þegar size == capacity þá resize() og resize stækkar capacity og þa getum við haldið áfram
@@ -24,7 +25,10 @@ class ArrayList:
         # Bara til að byrja með til að geta testað allt dótið, ég held að þetta megi ekki
         ret_str = ""
         for i in range(self.size):
-            ret_str = ret_str + " " + str(self.arr[i])
+            if i != self.size-1:
+                ret_str = ret_str + str(self.arr[i]) + ", "
+            else:
+                ret_str = ret_str + str(self.arr[i])
         return ret_str
 
     #Time complexity: O(n) - linear time in size of list
@@ -69,8 +73,9 @@ class ArrayList:
         # Virkar bara ef resize hefur 0 aftaná
         # síðan self.size += 1
 
-        self.resize()
-
+        if self.size == self.capacity:
+            self.resize()
+            
         for i in range(self.size, index, -1):
             self.arr[i] = self.arr[i-1]
         
@@ -136,8 +141,8 @@ class ArrayList:
 
     #Time complexity: O(n) - linear time in size of list
     def resize(self):
-
-        new_arr = [0] * (1 + self.size)
+        self.capacity = self.capacity * 2
+        new_arr = [None] * self.capacity
 
         for i in range(self.size):
             new_arr[i] = self.arr[i]
@@ -161,7 +166,9 @@ class ArrayList:
         # Þannig for i in range(index, self.size - 1) og siðan self.arr[i] = self.arr[i+1] síðan þarf að minka size um 1, kanski má þetta ekki, veit ekki hvort það megi hafa for loopur
         # Önnur leið væri að bara slicea listann uppað indexinu og frá indexinu og bæta saman
         # self.arr = self.arr[:index] + self.arr[index+1:] og síðan taka 1 fra size, self.size -= 1, held að þetta megi ekki
-        
+        if index < 0 or index > self.size:
+            raise IndexOutOfBounds()
+
         for i in range(index, self.size - 1):
             self.arr[i] = self.arr[i+1]
         
@@ -176,15 +183,52 @@ class ArrayList:
         
         ## Virkar
 
+    def Linear_Search(self, value):
+        if not self.arr:
+            return False
+        
+        if self.arr[0] == value:
+            return True
+    
+        return Linear_Search(self.arr[1:], value)
+
+    def Binary_search(self, value):
+    # Base case: if the string is empty, the element is not found
+        if not value:
+            return False
+        else:
+            # Calculate the mid index and compare the middle element with the target
+            mid = self.size // 2
+            if self.arr[mid] == value:
+                return True
+            elif self.arr[mid] > value:
+                # Recursive case: search in the left half of the string
+                return Binary_search(self.arr[:mid], value)
+            else:
+                # Recursive case: search in the right half of the string
+                return Binary_search(self.arr[mid+1:], value)
+
+    def check_ordered(self):
+        for i in range(self.size-1):
+            if self.arr[i] > self.arr[i+1]:
+                return False
+        return True
+            
+
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
-        # TODO: remove 'pass' and implement functionality
+        # Er manneskjan alltaf að setja inn hærri tölu
+        # Eða þarf að leita í arrayinu eftir réttum stað fyrir töluna og siðan insert() ?
+        # Gera fall sem tjékkar hvort i+1 < i
         pass
 
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
-        # TODO: remove 'pass' and implement functionality
+        # Ef Arrayið er sorted þá recursive binary search
+        # Ef arrayið er ekki sorted þá linear
+        # Má bæta við function i klasann sem er lin search og bin search og ordered checker ?
+    
         pass
 
     #Time complexity: O(n) - linear time in size of list
