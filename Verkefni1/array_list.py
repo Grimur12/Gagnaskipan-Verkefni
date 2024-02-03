@@ -13,7 +13,6 @@ class NotOrdered(Exception):
 class ArrayList:
 
     def __init__(self):
-
         self.size = 0
         self.capacity = 4
         self.arr = [None] * self.capacity
@@ -27,8 +26,6 @@ class ArrayList:
             else:
                 ret_str = ret_str + str(self.arr[i])
         return ret_str
-    
-    
 
     #Time complexity: O(n) - linear time in size of list
     def prepend(self, value):
@@ -52,7 +49,7 @@ class ArrayList:
 
     #Time complexity: O(1) - constant time
     def append(self, value):
-  
+
         self.insert(value,self.size)
 
     #Time complexity: O(1) - constant time
@@ -106,13 +103,10 @@ class ArrayList:
         
         self.size -= 1
 
-
-
     #Time complexity: O(1) - constant time
     def clear(self):
         self.size = 0
         self.arr = [None]*self.capacity
-        
 
     def Linear_Search(self, array, value, index = 0):
         if array:
@@ -123,7 +117,6 @@ class ArrayList:
                 return checker
     
         return False
-
 
     def Binary_search(self, array, value, size, index = 0):
         if size <= 0:
@@ -139,15 +132,12 @@ class ArrayList:
         else:
             return False
 
-
-
     def check_ordered(self):
         for i in range(self.size-1):
             if self.arr[i] > self.arr[i+1]:
                 return False
         return True
             
-
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
         if not self.check_ordered():
@@ -159,8 +149,6 @@ class ArrayList:
                 break
         else:
             self.append(value)
-        
-
 
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
@@ -184,7 +172,6 @@ class ArrayList:
         index = self.find(value)
         
         return self.remove_at(index)
-
 
 
 if __name__ == "__main__":
