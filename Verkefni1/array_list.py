@@ -69,21 +69,18 @@ class ArrayList:
         
         self.ordered = False
 
-
     #Time complexity: O(1) - constant time
     def get_first(self):
         if self.size == 0:
             raise Empty()
         return self.arr[0]
     
-
     #Time complexity: O(1) - constant time
     def get_at(self, index):
         if index < 0 or index >= self.size:
             raise IndexOutOfBounds()
         
         return self.arr[index]
-    
 
     #Time complexity: O(1) - constant time
     def get_last(self):
@@ -121,7 +118,6 @@ class ArrayList:
         self.arr = [None]*self.capacity
         self.ordered = True
         
-
     def Linear_Search(self, array, value, index = 0):
         if array:
             if array[0] == value:
@@ -148,27 +144,7 @@ class ArrayList:
         
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
-        # # Þetta er O(n^2) en virkar
-        # if self.size == self.capacity:
-        #     self.resize()
-
-        # if self.ordered:
-        #     for i in range(self.size):
-        #         if self.arr[i] > value:
-        #             for j in range(self.size, i, -1):
-        #                 self.arr[j] = self.arr[j-1]
-                    
-        #             self.arr[i] = value
-        #             self.size += 1
-        #             break
-        #     else:
-        #         self.arr[self.size] = value
-        #         self.size += 1
-        # else:
-        #     raise NotOrdered()
-        
-        # Reyna að gera O(n)
-        # Finna fyrst indexinn sem þarf að inserta inní siðan nota insert kóðann þarf samt að passa að geta appendað i lokinn ef þarf
+        # Get ekki notað insert því þá er ordered = false
         if self.size == self.capacity:
             self.resize()
 
@@ -182,16 +158,14 @@ class ArrayList:
                 for i in range(self.size, index, -1):
                     self.arr[i] = self.arr[i-1]
                         
-                    self.arr[index] = value
-                    self.size += 1
-                    break         
+                self.arr[index] = value
+                self.size += 1        
             else:
                 self.arr[self.size] = value
                 self.size += 1
         else:
             raise NotOrdered()    
 
-        
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
@@ -222,7 +196,3 @@ if __name__ == "__main__":
     # Do not add them outside this if statement
     # and make sure they are at this indent level
     pass
-
-# Þarf að búa til bool breytu, True eða False if ordered 
-# Clear verður lika true
-# Ef þú removear þangað til listinn er tómur þá er hann líka ordered = True
