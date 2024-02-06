@@ -1,3 +1,7 @@
+## Grímur Dagur Grímsson
+## Rizki Farhan Hauksson
+## Gagnaskipan -- 02/05/2024
+
 class IndexOutOfBounds(Exception):
     pass
 
@@ -13,9 +17,11 @@ class NotOrdered(Exception):
 class ArrayList:
 
     def __init__(self):
+
         self.size = 0
         self.capacity = 4
         self.arr = [None] * self.capacity
+        self.ordered = True
         
     #Time complexity: O(n) - linear time in size of list
     def __str__(self):
@@ -26,10 +32,11 @@ class ArrayList:
             else:
                 ret_str = ret_str + str(self.arr[i])
         return ret_str
-
+    
     #Time complexity: O(n) - linear time in size of list
     def prepend(self, value):
-
+        # Notar insert() loopuna til að shifta þannig O(n)
+        # False afþví notar insert
         self.insert(value,0)
 
     #Time complexity: O(n) - linear time in size of list
@@ -44,12 +51,13 @@ class ArrayList:
             self.arr[i] = self.arr[i-1]
         
         self.arr[index] = value
-
+        self.ordered = False
         self.size += 1
 
     #Time complexity: O(1) - constant time
     def append(self, value):
-
+        # Notar ekki loopuna í insert() bara arr[] = val þannig O(1)
+        # False afþví notar insert
         self.insert(value,self.size)
 
     #Time complexity: O(1) - constant time
@@ -58,6 +66,8 @@ class ArrayList:
             raise IndexOutOfBounds()
 
         self.arr[index] = value
+        
+        self.ordered = False
 
 
     #Time complexity: O(1) - constant time
@@ -81,7 +91,6 @@ class ArrayList:
             raise Empty()
         return self.arr[self.size-1]
         
-
     #Time complexity: O(n) - linear time in size of list
     def resize(self):
         self.capacity = self.capacity * 2
@@ -92,7 +101,6 @@ class ArrayList:
 
         self.arr = new_arr
 
-
     #Time complexity: O(n) - linear time in size of list
     def remove_at(self, index):
         if index < 0 or index >= self.size:
@@ -100,13 +108,19 @@ class ArrayList:
 
         for i in range(index, self.size - 1):
             self.arr[i] = self.arr[i+1]
-        
         self.size -= 1
+
+        if self.size == 0:
+            self.ordered = True
+        else:
+            self.ordered = False
 
     #Time complexity: O(1) - constant time
     def clear(self):
         self.size = 0
         self.arr = [None]*self.capacity
+        self.ordered = True
+        
 
     def Linear_Search(self, array, value, index = 0):
         if array:
@@ -126,34 +140,62 @@ class ArrayList:
         if array[mid] == value:
             return index + mid
         elif value > array[mid]:
-            return self.Binary_search(array[mid + 1 :], value, size - mid - 1, index + mid + 1)
+            return self.Binary_search(array[mid + 1:], value, size - mid - 1, index + mid + 1)
         elif value < array[mid]:
             return self.Binary_search(array[:mid], value, mid, index)
         else:
             return False
-
-    def check_ordered(self):
-        for i in range(self.size-1):
-            if self.arr[i] > self.arr[i+1]:
-                return False
-        return True
-            
+        
     #Time complexity: O(n) - linear time in size of list
     def insert_ordered(self, value):
-        if not self.check_ordered():
-            raise NotOrdered()
+        # # Þetta er O(n^2) en virkar
+        # if self.size == self.capacity:
+        #     self.resize()
 
-        for i in range(self.size):
-            if self.arr[i] > value:
-                self.insert(value,i)
-                break
+        # if self.ordered:
+        #     for i in range(self.size):
+        #         if self.arr[i] > value:
+        #             for j in range(self.size, i, -1):
+        #                 self.arr[j] = self.arr[j-1]
+                    
+        #             self.arr[i] = value
+        #             self.size += 1
+        #             break
+        #     else:
+        #         self.arr[self.size] = value
+        #         self.size += 1
+        # else:
+        #     raise NotOrdered()
+        
+        # Reyna að gera O(n)
+        # Finna fyrst indexinn sem þarf að inserta inní siðan nota insert kóðann þarf samt að passa að geta appendað i lokinn ef þarf
+        if self.size == self.capacity:
+            self.resize()
+
+        if self.ordered:
+            index = None      
+            for i in range(self.size):
+                if self.arr[i] > value:
+                    index = i
+                    break
+            if index is not None:        
+                for i in range(self.size, index, -1):
+                    self.arr[i] = self.arr[i-1]
+                        
+                    self.arr[index] = value
+                    self.size += 1
+                    break         
+            else:
+                self.arr[self.size] = value
+                self.size += 1
         else:
-            self.append(value)
+            raise NotOrdered()    
 
+        
     #Time complexity: O(n) - linear time in size of list
     #Time complexity: O(log n) - logarithmic time in size of list
     def find(self, value):
-        if self.check_ordered():
+        if self.ordered:
             binary_index = self.Binary_search(self.arr, value, self.size)
             if binary_index is not False:
                 return binary_index
@@ -168,10 +210,11 @@ class ArrayList:
 
     #Time complexity: O(n) - linear time in size of list
     def remove_value(self, value):
-
+        # Þarf ekki ordered afþví notar remove_at
         index = self.find(value)
         
         return self.remove_at(index)
+
 
 
 if __name__ == "__main__":
@@ -179,3 +222,7 @@ if __name__ == "__main__":
     # Do not add them outside this if statement
     # and make sure they are at this indent level
     pass
+
+# Þarf að búa til bool breytu, True eða False if ordered 
+# Clear verður lika true
+# Ef þú removear þangað til listinn er tómur þá er hann líka ordered = True
