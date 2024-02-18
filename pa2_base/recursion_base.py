@@ -27,15 +27,19 @@ def reverse_list(head):
 
     return next_head
 
+def palindrome_helper(front, current):
+    if current is None:
+        return True, front
+    is_palindrome, front = palindrome_helper(front, current.next)
+    if not is_palindrome or front.data != current.data:
+        return False, front
+    return True, front.next
+
 def palindrome(head):
     ## Ekki tilbuið
-    if head == None:
-        return True
-    elif head.next == None:
-        return True
-    test_head = head
-    # Gera recursionið og testa fysta stakið í venjulega á móti fyrsta í því ?
-    return True
+    is_palindrome, _ = palindrome_helper(head, head)
+    return is_palindrome
+
 
 if __name__ == "__main__":
     ##
