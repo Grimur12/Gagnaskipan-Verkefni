@@ -28,16 +28,16 @@ def reverse_list(head):
     return next_head
 
 def palindrome_helper(front, current):
-    if current is None:
-        return True, front
-    is_palindrome, front = palindrome_helper(front, current.next)
-    if not is_palindrome or front.data != current.data:
+    if current is None: # Ef current er None þá er listinn búinn að fara í gegnum allt og er þá Palindrome
+        return True, front # 
+    is_palindrome, front = palindrome_helper(front, current.next) # Þetta kallar á recursionið þangað til það hittir á síðasta stakið í listanum
+    if not is_palindrome or front.data != current.data: # Ef listinn er ekki Palindrome eða ef stakið sem front benti á er ekki sama og stakið sem current benti á þá er listinn ekki Palindrome
         return False, front
-    return True, front.next
+    return True, front.next # Ef listinn er Palindrome og stakið sem front benti á er sama og stakið sem current benti á þá skilar þetta True og næsta staki í listanum
 
 def palindrome(head):
     ## Ekki tilbuið
-    is_palindrome, _ = palindrome_helper(head, head)
+    is_palindrome, _ = palindrome_helper(head, head) # Þetta kallar á helper functionið sem skilar True ef listinn er Palindrome annars False
     return is_palindrome
 
 
