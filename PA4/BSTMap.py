@@ -91,31 +91,39 @@ class BSTMap():
             return True
 
     def remove(self, key):
-       pass
-
-    def swap_and_remove_with_rightmost(self, node_to_remove, rightmost_node):
-        pass # Remove virkar ekki / er ekki tilbuið
+        if self._find_recur(self.root,key):
+            self.root = self._remove_recur(self.root, key)
+            self.size -=1
+        else:
+            raise NotFoundException()
+        
 
     def _remove_recur(self, node, key):
         # Tilfelli 1: nóða sem á að removea er lauf, ekki með neitt left né right: þarf að láta nóðuna fyrir ofan benda á None
         # Tilfelli 2: nóða sem á að removea er með 1 nóðu til hægri eða vinstri, láta nóðuna fyrir ofan nóðuna sem á að removea benda á nóðuna fyrir neðan hana sem á að removea
         # Tilfelli 3: nóða sem á að removea er með nóðu til hægri og vinstri, finna nóðuna lengst til hægri í vinstra tréinu, swappa henni við það sem á að removea og síðan er það alveg eins og í tilviki annaðhvort 1 eða 2, afþví sú nóða gæti verið lauf eða verið með 1 barn á visntri
         # Finna nóðuna sem við viljum removea
-        node_to_remove = self._find_recur(self.root, key)
-        if node_to_remove is None:
-            return
-        if node_to_remove.right is None and node_to_remove.left is None: # Tilfelli 1
-            pass
-        elif node_to_remove.right is None: # Tilfelli 2
-            return node_to_remove.left
-        elif node_to_remove.left is None: # Tilfelli 2
-            return node_to_remove.right
-        else: # Tilfelli 3
-            rightmost_node = self.find_rightmost_node_recur(self.root.left) # nóðan sem er lengst til hægri í vinstra tréinu
-            self.swap_and_remove_with_rightmost(node_to_remove,rightmost_node)
+        if key < node.key:
+            node.left = self._remove_recur(node.left, key)
+        elif key > node.key:
+            node.right = self._remove_recur(node.right, key)
+        else:
+            if node.right is None: # Tilfelli 2
+                return node.left
+            elif node.left is None: # Tilfelli 2
+                return node.right
+            #Tilfelli 3
+            rightmost = self.find_rightmost_node_recur(node.left)
+
+            node.data = rightmost.data
+            node.key = rightmost.key
+
+            node.left = self._remove_recur(node.left, rightmost.key)
+        return node
+
 
     def find_rightmost_node_recur(self, node):
-        # nóðan sem þetta fall tekur inn ætti að vera self.root.left
+        # nóðan sem þetta fall tekur inn ætti að vera node.left
         # Fallið finnur lengstu nóðuna til hægri í vinstra tréinu sem við getum svo notað til að skipta
         # ef nóða er með bæði hægri og vinstri þá finna þessa nóðu og skipta á data og key 
         if node is None:
@@ -124,7 +132,7 @@ class BSTMap():
         if node.right is None:
             return node
         else:
-            return self.find_rightmost_node_recur(self, node.right)
+            return self.find_rightmost_node_recur(node.right)
 
     def __setitem__(self, key, data):
         # m[1] = "einn", key = 1, data = "einn" ef 1 er nuþegar key þá breyta data í 1, getum notað update ?
@@ -164,15 +172,14 @@ class BSTMap():
         return self._print_inorder_recur(self.root)
 
 if __name__ == "__main__":
-    print("\nTESTING BSTMAP")
+    print("\nTESTING BSTMAP Remove")
     m = BSTMap()
-
     try:
-        m.insert(5, "fimma")
+        m.insert(6, "sexa")
     except ItemExistsException:
         print("Item already exists")
     try:
-        m.insert(4, "fjarri")
+        m.insert(4, "fjarki")
     except ItemExistsException:
         print("Item already exists")
     try:
@@ -180,29 +187,88 @@ if __name__ == "__main__":
     except ItemExistsException:
         print("Item already exists")
     try:
-        m.insert(5, "fimmarimma")
+        m.insert(5, "fimma")
     except ItemExistsException:
         print("Item already exists")
-    m[1] = "ás"
     try:
-        m[4] = "fjarki"
-    except NotFoundException:
-        print("Item Not Found")
+        m.insert(8, "átta")
+    except ItemExistsException:
+        print("Item already exists")
     try:
-        m.update(8, "átta")
-    except NotFoundException:
-        print("Item Not Found")
+        m.insert(7, "sjöa")
+    except ItemExistsException:
+        print("Item already exists")
     try:
-        some_data = m[1]
-        print(some_data)
-    except NotFoundException:
-        print("Item Not Found")
-    
+        m.insert(9, "nía")
+    except ItemExistsException:
+        print("Item already exists")
     try:
-        some_data2 = m[8]
-        print(some_data2)
-    except NotFoundException:
-        print("Item Not Found")
-
+        m.insert(3, "þristur")
+    except ItemExistsException:
+        print("Item already exists")
+    print("size of map: " + str(len(m)))
     print(m)
-
+    print("--Remove--")
+    try:
+        m.remove(4)
+        print("Item removed 4")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(3)
+        print("Item removed 3")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(5)
+        print("Item removed 5")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(9)
+        print("Item removed 9")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(8)
+        print("Item removed 8")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(7)
+        print("Item removed 7")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(6)
+        print("Item removed 6")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(2)
+        print("Item removed 2")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
+    try:
+        m.remove(5)
+        print("Item removed 5")
+    except NotFoundException:
+        print("Item not found")
+    print("size of map: " + str(len(m)))
+    print(m)
