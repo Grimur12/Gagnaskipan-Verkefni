@@ -95,12 +95,8 @@ class DLL:
             self.quickSort(low, pivot.prev)
             self.quickSort(pivot.next, high)
 
-
-    def sort(self, low = None, high = None):
-        if low == None and high == None:
-            low = self.get_first_node()
-            high = self.get_last_node()
-            self.quickSort(low, high)
+    def sort(self):
+        self.quickSort(self.get_first_node(), self.get_last_node())
 
         
     def __len__(self):
@@ -151,6 +147,9 @@ if __name__ == "__main__":
     print(a.get_value())
     a.move_to_next()
     print(a.get_value())
+
+    a.partition(a.get_first_node(),a.get_last_node())
+    print(a)
 
 
     
