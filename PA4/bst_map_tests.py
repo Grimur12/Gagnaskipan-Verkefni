@@ -1,4 +1,4 @@
-﻿from BSTMap import *
+﻿from BSTMap_tilbuið import *
 # you can also import more than one file,
 # although if one imports the other it should
 # be enough to import the top level one

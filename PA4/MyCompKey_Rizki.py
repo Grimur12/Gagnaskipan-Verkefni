@@ -10,4 +10,8 @@ class MyComparableKey:
             return False
         else:
             return self.string_value < other.string_value
+
+if __name__ == "__main__":
+    pass
+
         
