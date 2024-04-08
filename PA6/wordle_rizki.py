@@ -151,7 +151,7 @@ class User:
     # We add some methods to count the total score, high score, wins and losses
     def count_total_score(self):
         """ Function to count the total score of the games the user has played """
-        return sum([game.score for game in self.games]) #
+        return sum([game.score for game in self.games]) #d
     
     def count_high_score(self):
         """ Function to get the best possible score the user has gotten from his games """
