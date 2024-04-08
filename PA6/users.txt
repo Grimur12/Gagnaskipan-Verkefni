@@ -1,4 +1,0 @@
-rizki,    yak,    win, 2
-rizki,  cat,  win, 4
-rizki, net, lost, 0
-rizki, row, lost, 0

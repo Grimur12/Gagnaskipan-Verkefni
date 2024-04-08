@@ -2,7 +2,7 @@ import random
 
 class Wordle:
     """ Wordle game class adds all the components to create the game Wordle """
-    def __init__(self, attempts=5, word_length=5):
+    def __init__(self, attempts, word_length):
         self.attempts = attempts # How many attempts you have to solve the game
         self.word_length = word_length # Length of the word chosen
         self.word = self.get_word() # Get a random word from the word bank
@@ -80,8 +80,7 @@ class Wordle:
                 break
             self.print_gameboard() # If user has not won or lost print the gameboard, guess, hint and attempts left
         
-        play_again = input("Do you want to play again? (y/n): ").strip().lower() # Ask the user if they want to play again
-        return play_again.startswith('y') # If they want to play again return True else False
+        self.play_again = input("Do you want to play again? (y/n): ").strip().lower() # Ask the user if they want to play again
         # for i, guess in enumerate(self.guesses):
         #     print(f"Guess {i+1}: {guess}")
         # print("Feedback:")
@@ -183,12 +182,14 @@ class User:
     def save_stats(self):
         """ Function that saves the user stats to a text document, saving it for later game sessions """
         with open("stats.txt", "w") as file: 
+            #lines = file # We are saving the user stats to a file
+            #name, wins, losses, total_score, high_score = lines.split(",") # Split the lines by commas
             file.write(f"{self.name}, {self.wins}, {self.losses}, {self.total_score}, {self.high_score}\n") # Write the stats into the stats file
 
     def save_user_games(self):
         """ Function that saves the user games to a text document, saving it for later game sessions """
         with open("users.txt", "w") as file:
-            for game in self.games: # We are saving the user games to a file by using a for loop and writing the game to the file
+            for game in self.games: # Save the user games into a file
                 file.write(f"{self.name}, {game.word}, {game.status}, {game.attempts}\n")
 
     def load_stats(self):
@@ -216,7 +217,7 @@ class User:
             with open("users.txt", "r") as file:
                 for line in file: # Reads the users previous games into the user profile to continue playing
                     self.name, word, status, attempts = line.strip().split(",") # We are spliting the line by commas
-                    game = Wordle(int(attempts))
+                    game = Wordle(0, len(word)) # And then we are adding the game to the user profile
                     game.word = word
                     game.status = status
                     game.attempts = int(attempts)
@@ -235,7 +236,33 @@ class User:
             print(f"User: {self.name} - Word: {game.word} - Status: {status} - Attempts remaining: {game.attempts}")
 
     
-
+def get_word_length():
+    """ Function to get the word length from the user """
+    while True:
+        try:
+            word_length = int(input("Choose the length of the word you want to guess between 3 and 9: ")) # User chooses the length of the word he wants to guess
+            if word_length < 3 or word_length > 9:
+                print("Invalid input. Please enter a number between 3 and 10.")
+                return get_word_length()
+            else:
+                return word_length
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            return get_word_length()
+        
+def get_attempts():
+    """ Function to get the number of attempts from the user """
+    while True:
+        try:
+            attempts = int(input("Choose the number of attempts you want to have between 3 and 10: ")) # User chooses the number of attempts he wants to have
+            if attempts < 3 or attempts > 10:
+                print("Invalid input. Please enter a number between 1 and 10.")
+                return get_attempts()
+            else:
+                return attempts
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            return get_attempts()
         
 def main():
     """ Main game function that enables the user to play the Wordle game """
@@ -252,25 +279,18 @@ def main():
         print("5. Exit")
         choice = input("Enter choice: ")
         if choice == "1": # User decided to play Wordle
-            continue_playing = True
-            while True:
-                try:
-                    play = int(input("Choose the length of the word you want to guess: ")) # User chooses the length of the word he wants to guess
-                    word_length = int(play) # Convert the input to an integer
-                    # Ensure word_length is within a reasonable range
-                    word_length = max(3, min(word_length, 10))
-                except ValueError:
-                    print("Invalid input. Please enter a number.")
-                    continue # Continue the loop if the input is invalid
-
-                game = Wordle(word_length=word_length) # here we are allowing the user to choose the length of the word
-                continue_playing = game.play_round() 
-                if continue_playing: # If the user wants to play again
-                    user.add_game(game)
-                    user.add_game_result(game)
-                    user.save_stats()
-                else:
-                    break
+            word_length = get_word_length() # Get the word length from the user
+            user_attempts = get_attempts() # Get the number of attempts from the user
+            game = Wordle(user_attempts, word_length) # here we are allowing the user to choose the length of the word
+            game.play_round() # Play the game
+            if game.play_again == "y":
+                user.add_game(game)
+                user.add_game_result(game)
+                user.save_stats()
+                game = Wordle(word_length, user_attempts)
+                game.play_round()
+            else:
+                break
     
         elif choice == "2": # User decided to manage the word bank
             Wordle.manage_word_file_menu()
@@ -284,12 +304,11 @@ def main():
             print(f"Total Score: {user.total_score}")
             print(f"High Score: {user.high_score}")
         elif choice == "5":
-            user.save_user_games() # Save the users games since he decided to stop playing
-            break
+            user.save_user_games()
+            user.save_stats() # Save the users games since he decided to stop playing
+            break # if 
         else:
             print("Invalid choice, please enter a valid choice.")
-        user.save_user_games()
-        user.save_stats()
     
 
 if __name__ == "__main__":
