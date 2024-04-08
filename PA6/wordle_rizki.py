@@ -79,6 +79,9 @@ class Wordle:
                 print("You lost, the word was:", self.word) # If they lost display the correct word
                 break
             self.print_gameboard() # If user has not won or lost print the gameboard, guess, hint and attempts left
+        
+        play_again = input("Do you want to play again? (y/n): ").strip().lower() # Ask the user if they want to play again
+        return play_again.startswith('y') # If they want to play again return True else False
         # for i, guess in enumerate(self.guesses):
         #     print(f"Guess {i+1}: {guess}")
         # print("Feedback:")
@@ -249,21 +252,26 @@ def main():
         print("5. Exit")
         choice = input("Enter choice: ")
         if choice == "1": # User decided to play Wordle
+            continue_playing = True
             while True:
                 try:
-                    play = input("Choose the length of the word you want to guess: ")
-                    word_length = int(play)
+                    play = int(input("Choose the length of the word you want to guess: ")) # User chooses the length of the word he wants to guess
+                    word_length = int(play) # Convert the input to an integer
                     # Ensure word_length is within a reasonable range
                     word_length = max(3, min(word_length, 10))
-                    break  # Exit the loop if the input is successfully converted
                 except ValueError:
                     print("Invalid input. Please enter a number.")
+                    continue # Continue the loop if the input is invalid
 
-            game = Wordle(word_length=word_length) # here we are allowing the user to choose the length of the word
-            game.play_round() 
-            user.add_game(game)
-            user.add_game_result(game)
-            user.save_stats()
+                game = Wordle(word_length=word_length) # here we are allowing the user to choose the length of the word
+                continue_playing = game.play_round() 
+                if continue_playing: # If the user wants to play again
+                    user.add_game(game)
+                    user.add_game_result(game)
+                    user.save_stats()
+                else:
+                    break
+    
         elif choice == "2": # User decided to manage the word bank
             Wordle.manage_word_file_menu()
         elif choice == "3": # User decided to check his game history
