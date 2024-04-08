@@ -96,16 +96,23 @@ class HashMap:
         for bucket in self.buckets:
             current = bucket.head
             while current != None:
-                new_buckets[hash(current.data[0]) % self.capacity].insert(current.data[0], current.data[1])
+                index = self.compression(current.data[0])
+                bucket = new_buckets[index]
+                bucket.insert(current.data[0], current.data[1])
                 current = current.next
         self.buckets = new_buckets
+
+    def compression(self, key):
+        return hash(key) % self.capacity
+
 
     def insert(self, key, data):
         if self.contains(key):
             raise ItemExistsException()
-        if self.size >= self.capacity * 1.2:
+        if self.size > 1.2 * self.capacity:
             self.rebuild()
-        self.buckets[hash(key) % self.capacity].insert(key, data)
+        index = self.compression(key)
+        self.buckets[index].insert(key, data)
         self.size += 1
 
     def update(self, key, data):
