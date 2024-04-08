@@ -10,9 +10,9 @@ class Wordle:
         self.score = 0
 
     def get_word(self):
-        with open("wordle-words.txt", "r") as file:
-            wordlist = [word.strip().lower() for word in file if len(word.strip()) == self.word_length]
-        return random.choice(wordlist) if wordlist else None
+        with open("wordle-words.txt", "r") as file: # We will use a file to store the words
+            wordlist = [word.strip().lower() for word in file if len(word.strip()) == self.word_length] # Filter words by length
+        return random.choice(wordlist) if wordlist else None # 
     
     def check_guess(self, guess):
         return len(guess) == self.word_length and guess.isalpha()
@@ -23,10 +23,10 @@ class Wordle:
     def check_loss(self):
         return self.attempts == 0
     
-    def give_feedback(self, guess):
-        feedback = ""
-        for i, letter in enumerate(guess):
-            if letter == self.word[i]:
+    def give_feedback(self, guess): # We will use a different feedback system
+        feedback = "" # Initialize feedback
+        for i, letter in enumerate(guess): # And then we iterate over the guess
+            if letter == self.word[i]: 
                 feedback += "C"
             elif letter in self.word:
                 feedback += "c"
@@ -36,10 +36,11 @@ class Wordle:
     
     def print_gameboard(self):
         print("Attempts Left:", self.attempts)
-        for i, guess in enumerate(self.guesses, start=1):
-            print(f"Guess {i}: {guess} - HINT: {self.give_feedback(guess)}")
+        for i, guess in enumerate(self.guesses, start=1): # We will only print the guesses by the user 
+            print(f"Guess {i}: {guess} - HINT: {self.give_feedback(guess)}") # And the feedback for each guess
 
-    def game_instructions(self):
+    def game_instructions(self): # We will provide the user with instructions on how to play the game
+        # We will also provide the user with feedback on the letters they guessed
         print("Welcome to Wordle!")
         print(f"The goal of the game is to guess the {self.word_length} letter word in {self.attempts} attempts.")
         print("After each guess, you will receive feedback on the letters you guessed.")
@@ -50,18 +51,18 @@ class Wordle:
     
     def play_round(self):
         self.game_instructions()
-        while self.status == "playing" and self.attempts > 0:
+        while self.status == "playing" and self.attempts > 0: # So the while loop will continue until the user wins or loses
             guess = input(f"Enter a {self.word_length} letter guess: ").lower()
-            if not self.check_guess(guess):
+            if not self.check_guess(guess): # And it will check if the guess is valid
                 print(f"Invalid guess, please enter a {self.word_length} letter word.")
                 continue
-            self.guesses.append(guess)
+            self.guesses.append(guess) # If the guess is valid, it will be added to the list of guesses
             self.attempts -= 1
-            feedback = self.give_feedback(guess)
+            feedback = self.give_feedback(guess) # And the feedback will be provided to the user
             print(f"Feedback: {feedback}")
             if self.check_win(guess):
                 self.status = "win"
-                self.score = self.attempts * 10
+                self.score = self.attempts * 10 # Some basic calculation for the score
                 print("Congratulations, you won! Your score is:", self.score)
                 break
             elif self.check_loss():
@@ -76,14 +77,14 @@ class Wordle:
         #     print(f"Guess {i+1}: {self.give_feedback(guess)}")
 
     def add_word_to_file():
-        word = input("Enter a letter word: ").strip().lower()
+        word = input("Enter a letter word: ").strip().lower() # Here we will add a word to the file and strip it and make it lowercase
         try:
             with open("wordle-words.txt", "r+") as file:
-                words = [line.strip() for line in file]
+                words = [line.strip() for line in file] # It's reading the words from the file
                 if word in words:
                     print("Word already exists in file.")
                 else:
-                    file.seek(0, 2) 
+                    file.seek(0, 2) # Here we are moving the cursor to the end of the file and checking if the word is in the file
                     file.write(f"{word}\n")
                     print(f"{word} added to file.")
         except FileNotFoundError:
@@ -97,7 +98,7 @@ class Wordle:
         word = input("Enter a word to remove: ").lower().strip()
         try:
             with open("wordle-words.txt", "r") as file:
-                words = file.readlines()
+                words = file.readlines() 
             with open("wordle-words.txt", "w") as file:
                 if f"{word}\n" not in words:
                     print(f"{word} was not found in the word bank.")
@@ -110,7 +111,7 @@ class Wordle:
             print("Word bank file not found.")
 
     def manage_word_file_menu():
-        while True:
+        while True: # We provide the user with a menut to manage the word bank
             print("\nWord Bank Management")
             print("1. Add word to file")
             print("2. Remove word from file")
@@ -129,7 +130,7 @@ class Wordle:
 
 
 class User:
-    def __init__(self, name):
+    def __init__(self, name): # Add some stats for the user
         self.name = name
         self.games = []
         self.high_score = 0
@@ -137,8 +138,9 @@ class User:
         self.wins = 0
         self.losses = 0
     
+    # We add some methods to count the total score, high score, wins and losses
     def count_total_score(self):
-        return sum([game.score for game in self.games])
+        return sum([game.score for game in self.games]) #
     
     def count_high_score(self):
         return max([game.score for game in self.games])
@@ -149,6 +151,7 @@ class User:
     def count_losses(self):
         return sum([1 for game in self.games if game.status == "lost"])
     
+    # We add some methods to add a game, add a game result, save stats, load stats, load user games, save user games and user history
     def add_game(self, game):
         self.games.append(game)
 
@@ -161,7 +164,7 @@ class User:
         self.high_score = self.count_high_score()
 
     def save_stats(self):
-        with open("stats.txt", "w") as file:
+        with open("stats.txt", "w") as file: 
             file.write(f"{self.name}, {self.wins}, {self.losses}, {self.total_score}, {self.high_score}\n")
 
     def load_stats(self):
@@ -188,7 +191,7 @@ class User:
         try:
             with open("users.txt", "r") as file:
                 for line in file:
-                    self.name, word, status, attempts = line.strip().split(",")
+                    self.name, word, status, attempts = line.strip().split(",") # We are spliting the line by commas
                     game = Wordle(int(attempts))
                     game.word = word
                     game.status = status
@@ -199,7 +202,7 @@ class User:
 
     def save_user_games(self):
         with open("users.txt", "w") as file:
-            for game in self.games:
+            for game in self.games: # We are saving the user games to a file by using a for loop and writing the game to the file
                 file.write(f"{self.name}, {game.word}, {game.status}, {game.attempts}\n")
 
     def user_history(self):
@@ -219,7 +222,7 @@ def main():
     user = User(user)
     user.load_user_games() # Load user games from file if user exists
 
-    while True:
+    while True: # While loop for the main menu so the user can choose what to do, just something basic
         print("\nWordle Menu")
         print("1. Play Wordle")
         print("2. Manage Word Bank")
@@ -238,8 +241,8 @@ def main():
                 except ValueError:
                     print("Invalid input. Please enter a number.")
 
-            game = Wordle(word_length=word_length)
-            game.play_round()
+            game = Wordle(word_length=word_length) # here we are allowing the user to choose the length of the word
+            game.play_round() 
             user.add_game(game)
             user.add_game_result(game)
             user.save_stats()
@@ -248,7 +251,7 @@ def main():
         elif choice == "3":
             user.user_history()
         elif choice == "4":
-            user.load_stats()
+            user.load_stats() # Load user stats from file
             print(f"User: {user.name}")
             print(f"Wins: {user.wins}")
             print(f"Losses: {user.losses}")
