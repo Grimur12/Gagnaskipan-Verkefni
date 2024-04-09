@@ -246,7 +246,6 @@ class User:
             status = "Won" if game.status == "win" else "Lost"
             print(f"User: {self.name} - Word: {game.word} - Status: {status} - Attempts remaining: {game.attempts}")
 
-
 def get_word_length():
     try:
         word_length = int(input("Choose the length of the word you want to guess between 3 and 10: ")) # User chooses the length of the word he wants to guess
