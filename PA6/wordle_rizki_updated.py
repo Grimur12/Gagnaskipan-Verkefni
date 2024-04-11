@@ -3,12 +3,14 @@ import random
 class Wordle:
     """ Wordle game class adds all the components to create the game Wordle """
     def __init__(self, attempts, word_length):
+        self.max_attempts = attempts # The attempts you started with
         self.attempts = attempts # How many attempts you have to solve the game
         self.word_length = word_length # Length of the word chosen
         self.word = self.get_word() # Get a random word from the word bank
         self.guesses = [] # Empty list for each game to store guesses and secret code
         self.status = "playing" 
         self.score = 0 # Initialize score for each game
+        self.is_new_game = True # Bool to check if the game is new or not
 
     def get_word(self):
         """ Fetches a word from the word bank """
@@ -56,9 +58,19 @@ class Wordle:
         print("If a letter is correct but in the wrong position, it will be marked with a 'c'.")
         print("If a letter is incorrect, it will be marked with a '-'.")
         print("Good luck!")
-    
+
+    def get_score(self):
+        """ Function creates a score for each game, rewards you for using fewer attempts to guess and choosing longer words"""
+        penalty_for_wrong_guesses = (self.max_attempts - self.attempts) * 5 # Penalty for wrong guesses
+        bonus_for_word_length = self.word_length * 10 # Bonus for word length
+        streak_bonus = 0 # Bonus for streak
+        total_score = 100 - penalty_for_wrong_guesses + bonus_for_word_length + streak_bonus # Total score
+        return max(total_score, 0) # Return the total score, if it is negative return 0
+
+
     def play_round(self):
         """ Main function to play the game, uses everything together to make Wordle """
+        print(self.word,"WORD IS THIS")
         self.game_instructions() # Starts off by displaying the game instructions to the user
         while self.status == "playing" and self.attempts > 0: # while loop will continue until the user wins or loses
             guess = input(f"Enter a {self.word_length} letter guess: ").lower() # Gets the user guess for the word, lower() to nullify capitalization
@@ -67,11 +79,9 @@ class Wordle:
                 continue
             self.guesses.append(guess) # If the guess is valid, it will be added to the list of guesses and the game goes on
             self.attempts -= 1
-            feedback = self.give_feedback(guess) # Feedback from the guess will be provided to the user
-            print(f"Feedback: {feedback}")
             if self.check_win(guess): # Check to see if the guessed word was correct
                 self.status = "win" # If so they win
-                self.score = self.attempts * 10 # And they get a score for the game
+                self.score = self.get_score()
                 print("Congratulations, you won! Your score is:", self.score)
                 break
             elif self.check_loss(): # Check to see if they they used up all their attempts
@@ -80,7 +90,6 @@ class Wordle:
                 break
             self.print_gameboard() # If user has not won or lost print the gameboard, guess, hint and attempts left
         
-        self.play_again = input("Do you want to play again? (y/n): ").strip().lower() # Ask the user if they want to play again
         # for i, guess in enumerate(self.guesses):
         #     print(f"Guess {i+1}: {guess}")
         # print("Feedback:")
@@ -144,14 +153,14 @@ class User:
         self.name = name # Name of user
         self.games = [] # Games the user has played
         self.high_score = 0 # High score of user
-        self.total_score = 0 # Total score of user
+        self.total_score = 0 # Total score of user 
         self.wins = 0 # Total wins of user
         self.losses = 0 # Total losses of user
     
     # We add some methods to count the total score, high score, wins and losses
     def count_total_score(self):
         """ Function to count the total score of the games the user has played """
-        return sum([game.score for game in self.games]) #d
+        return sum([game.score for game in self.games]) 
     
     def count_high_score(self):
         """ Function to get the best possible score the user has gotten from his games """
@@ -176,52 +185,56 @@ class User:
             self.wins += 1
         else:
             self.losses += 1
-        self.total_score = self.count_total_score()
-        self.high_score = self.count_high_score()
+        self.total_score += game.score # Add the score of the game to the total score of the user
+        self.high_score = max(self.high_score, game.score)
 
     def save_stats(self):
         """ Function that saves the user stats to a text document, saving it for later game sessions """
-        with open("stats.txt", "w") as file: 
-            #lines = file # We are saving the user stats to a file
-            #name, wins, losses, total_score, high_score = lines.split(",") # Split the lines by commas
+        with open("stats.txt", "a") as file: 
             file.write(f"{self.name}, {self.wins}, {self.losses}, {self.total_score}, {self.high_score}\n") # Write the stats into the stats file
 
     def save_user_games(self):
-        """ Function that saves the user games to a text document, saving it for later game sessions """
-        with open("users.txt", "w") as file:
-            for game in self.games: # Save the user games into a file
-                file.write(f"{self.name}, {game.word}, {game.status}, {game.attempts}\n")
+        with open("users.txt", "a") as file:
+            for game in self.games:
+                if game.is_new_game:  # Check if the game is marked as new
+                    game_result = f"{self.name}, {game.word}, {game.status}, {game.attempts}"
+                    file.write(game_result + "\n")
+                    game.is_new_game = False  # Mark the game as saved
+
 
     def load_stats(self):
-        """ Function to load the previously saved user stats into a new game session """
         try:
             with open("stats.txt", "r") as file:
-                line = file.readline().strip()
-                parts = line.split(",")
-                if len(parts) == 5: # Reads all the stats into the user profile to continue playing
-                    self.name, wins, losses, total_score, high_score = parts
-                    self.wins = int(wins)
-                    self.losses = int(losses)
-                    self.total_score = int(total_score)
-                    self.high_score = int(high_score)
-                else: # Error check for the stats text file
-                    raise ValueError("Incorrect file format")
-        except FileNotFoundError: # Error check if file does not exist
+                for line in file:
+                    name, wins, losses, total_score, high_score = line.strip().split(",")
+                    if name == self.name:
+                        self.wins = int(wins)
+                        self.losses = int(losses)
+                        self.total_score = int(total_score)
+                        self.high_score = int(high_score)
+                        break
+        except FileNotFoundError:
             print("Stats file not found.")
-        except ValueError as e:
-            print(f"Error loading stats: {e}")
 
-    def load_user_games(self):
+    def load_user_games(self, name):
         """ Function to load the previously saved user games into a new game session """
+        user_found = False # Bool to see if user is in the document 
         try:
             with open("users.txt", "r") as file:
                 for line in file: # Reads the users previous games into the user profile to continue playing
                     self.name, word, status, attempts = line.strip().split(",") # We are spliting the line by commas
-                    game = Wordle(int(attempts), len(word))
-                    game.word = word
-                    game.status = status
-                    game.attempts = int(attempts)
-                    self.games.append(game)
+                    if self.name == name:
+                        user_found = True
+                        game = Wordle(0, len(word)) # And then we are adding the game to the user profile
+                        game.word = word
+                        game.status = status
+                        game.attempts = int(attempts.strip())
+                        game.is_new_game = False
+                        self.games.append(game)
+            if user_found:
+                print(f"Welcome back {name}!")
+            else:
+                print(f"Welcome {name}!")
         except FileNotFoundError: # Error check if file does not exist
             print("User file not found.")
 
@@ -263,12 +276,37 @@ def get_attempts():
         except ValueError:
             print("Invalid input. Please enter a number.")
             return get_attempts()
-        
+    
+def play_game(user):
+    word_length = get_word_length() # Get the word length from the user
+    user_attempts = get_attempts() # Get the number of attempts from the user
+    game = Wordle(user_attempts, word_length) # Initialize the game
+    game.play_round() # Play the game
+    user.add_game(game) # Add the game to the user's game history
+    user.add_game_result(game) # Update user's stats based on the game result
+
+
+def play_game_loop(user): 
+    """This function enables the user to play again without going back to the menu screen"""
+    while True:
+        play_game(user)
+        print("Debug: game added")
+
+        play_again = input("Do you want to play again? (y/n): ") # Ask the user if he wants to play again
+        if play_again not in ['y', 'Y', 'n', 'N']:
+            print("invalid input, please enter y or n")
+            continue
+
+        if play_again == 'n' or play_again == 'N':
+            user.save_user_games()
+            print("Debug: game saved")
+            break
+
 def main():
     """ Main game function that enables the user to play the Wordle game """
-    user = input("Enter your username: ")
-    user = User(user)
-    user.load_user_games() # Load user games from file if user exists
+    name = input("Enter your username: ")
+    user = User(name)
+    user.load_user_games(name) # Load user games from file if user exists
 
     while True: # While loop maintains until the user decides to quit playing. Enables the user to play the game
         print("\nWordle Menu") # Instructions on how to choose your options
@@ -279,14 +317,7 @@ def main():
         print("5. Exit")
         choice = input("Enter choice: ")
         if choice == "1": # User decided to play Wordle
-            word_length = get_word_length() # Get the word length from the user
-            user_attempts = get_attempts() # Get the number of attempts from the user
-            game = Wordle(user_attempts, word_length) # here we are allowing the user to choose the length of the word
-            game.play_round() # Play the game
-            user.add_game(game)
-            user.add_game_result(game)
-            
-    
+            play_game_loop(user) # Function enables the gameplay and play again functionality
         elif choice == "2": # User decided to manage the word bank
             Wordle.manage_word_file_menu()
         elif choice == "3": # User decided to check his game history
@@ -294,6 +325,7 @@ def main():
         elif choice == "4": # User decided to view his game stats
             user.load_stats() # Load user stats from file
             print(f"User: {user.name}")
+            print(f"Total games played: {user.wins + user.losses}")
             print(f"Wins: {user.wins}")
             print(f"Losses: {user.losses}")
             print(f"Total Score: {user.total_score}")
@@ -301,7 +333,7 @@ def main():
         elif choice == "5":
             user.save_user_games()
             user.save_stats() # Save the users games since he decided to stop playing
-            break # if 
+            break
         else:
             print("Invalid choice, please enter a valid choice.")
     
