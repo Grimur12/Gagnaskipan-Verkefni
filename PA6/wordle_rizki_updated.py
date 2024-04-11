@@ -194,14 +194,15 @@ class User:
             file.write(f"{self.name}, {self.wins}, {self.losses}, {self.total_score}, {self.high_score}\n") # Write the stats into the stats file
 
     def save_user_games(self):
+    # Only append new games to the file
         with open("users.txt", "a") as file:
             for game in self.games:
                 if game.is_new_game:  # Check if the game is marked as new
                     game_result = f"{self.name}, {game.word}, {game.status}, {game.attempts}"
                     file.write(game_result + "\n")
-                    game.is_new_game = False  # Mark the game as saved
+                    game.is_new_game = False  # Mark the game as saved, preventing future duplication
 
-
+    
     def load_stats(self):
         try:
             with open("stats.txt", "r") as file:
@@ -217,36 +218,40 @@ class User:
             print("Stats file not found.")
 
     def load_user_games(self, name):
-        """ Function to load the previously saved user games into a new game session """
-        user_found = False # Bool to see if user is in the document 
+        """Function to load the previously saved user games into a new game session."""
+        user_found = False  # Bool to see if user is in the document
         try:
             with open("users.txt", "r") as file:
-                for line in file: # Reads the users previous games into the user profile to continue playing
-                    self.name, word, status, attempts = line.strip().split(",") # We are spliting the line by commas
-                    if self.name == name:
+                for line in file:  # Reads the users' previous games into the user profile to continue playing
+                    line_name, word, status, attempts = line.strip().split(",")  # Use a local variable to read the name
+                    if line_name == name:
                         user_found = True
-                        game = Wordle(0, len(word)) # And then we are adding the game to the user profile
+                        game = Wordle(int(attempts), len(word))  # Correctly initialize the game with the right parameters
                         game.word = word
-                        game.status = status
-                        game.attempts = int(attempts.strip())
-                        game.is_new_game = False
+                        game.status = status.strip()
+                        game.attempts = int(attempts)
+                        game.is_new_game = False  # Mark the game as already saved
                         self.games.append(game)
             if user_found:
                 print(f"Welcome back {name}!")
             else:
                 print(f"Welcome {name}!")
-        except FileNotFoundError: # Error check if file does not exist
+        except FileNotFoundError:  # Error check if file does not exist
             print("User file not found.")
+
+
 
     def user_history(self):
         """ Function to check a specific users history """
-        if not self.games: # If the user has no games played
-            print("No games played yet.") 
-            return
-        print("Game history for", self.name) # The if statement didn't run so he has a game history to display
-        for game in self.games: # Display the specified user game history
-            status = "Won" if game.status == "win" else "Lost"
-            print(f"User: {self.name} - Word: {game.word} - Status: {status} - Attempts remaining: {game.attempts}")
+        try:
+            with open("users.txt", "r") as file:
+                for line in file:
+                    name, word, status, attempts = line.strip().split(",")
+                    if name == self.name:
+                        print(f"Name: {name}, Word:{word}, Status:{status}, Attempts:{attempts}")
+        except FileNotFoundError:
+            print("User file not found.")
+
 
     
 def get_word_length():
@@ -341,4 +346,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-            
