@@ -1,0 +1,5 @@
+Grimur, sun, win, 0
+Grimur, pie, lost, 0
+Grimur, fox, win, 2
+Grimur2, jump, win, 2
+Grimur2, yak, lost, 0
