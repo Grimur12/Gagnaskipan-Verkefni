@@ -186,27 +186,26 @@ class User:
             file.write(f"{self.name}, {self.wins}, {self.losses}, {self.total_score}, {self.high_score}\n") # Write the stats into the stats file
 
     def save_user_games(self):
-        """ Function Appends new games to the users.txt file """
+        """ Function appends user games to users.txt file """
         with open("users.txt", "a") as file:
             for game in self.games:
                 if game.is_new_game:  # Check if the game is marked as new
-                    game_result = f"{self.name}, {game.word}, {game.status}, {game.attempts}" # Saves the information we need from each new game
+                    game_result = f"{self.name}, {game.word}, {game.status}, {game.attempts}"
                     file.write(game_result + "\n")
-                    game.is_new_game = False  # Mark the game as saved, so that it wont add it again later
-
+                    game.is_new_game = False  # Mark the game as saved, preventing duplicate games 
+    
     def load_stats(self):
-        """ Function loads the specified user stats """
+        """ Function to load the previously saved user stats into a new game session."""
         try:
             with open("stats.txt", "r") as file:
                 for line in file:
-                    name, wins, losses, total_score, high_score = line.strip().split(",")
-                    if name == self.name: # Only add the stats if the user that is playing has played before and has a game history
-                        self.wins = int(wins)
-                        self.losses = int(losses)
-                        self.total_score = int(total_score)
-                        self.high_score = int(high_score)
-                        break
-        except FileNotFoundError:
+                    line_name, wins, losses, total_score, high_score = line.strip().split(",") # Use a local variable to read the name
+                    if line_name == self.name:
+                        self.wins += int(wins)
+                        self.losses += int(losses)
+                        self.total_score += int(total_score)
+                        self.high_score = max(self.high_score, int(high_score))
+        except FileNotFoundError:  # Error check if file does not exist
             print("Stats file not found.")
 
     def load_user_games(self, name):
@@ -214,15 +213,15 @@ class User:
         user_found = False  # Bool to see if user is in the document
         try:
             with open("users.txt", "r") as file:
-                for line in file:  # Reads the users previous games into the user profile to continue playing
-                    line_name, word, status, attempts = line.strip().split(",")
+                for line in file:  # Reads the users' previous games into the user profile to continue playing
+                    line_name, word, status, attempts = line.strip().split(",")  # Use a local variable to read the name
                     if line_name == name:
                         user_found = True
-                        game = Wordle(int(attempts), len(word))  # initialize a game instance with the relevant attempts and word length
+                        game = Wordle(int(attempts), len(word))  # Correctly initialize the game with the right parameters
                         game.word = word
                         game.status = status.strip()
                         game.attempts = int(attempts)
-                        game.is_new_game = False  # Make sure the game wont be saved again
+                        game.is_new_game = False  # Mark the game as already saved
                         self.games.append(game)
             if user_found:
                 print(f"Welcome back {name}!")
@@ -237,14 +236,14 @@ class User:
             with open("users.txt", "r") as file:
                 for line in file:
                     name, word, status, attempts = line.strip().split(",")
-                    if name == self.name: # After loading in the variables display the stats for the specified user
+                    if name == self.name:
                         print(f"Name: {name}, Word:{word}, Status:{status}, Attempts:{attempts}")
         except FileNotFoundError:
             print("User file not found.")
-    
+
 def get_word_length():
     """ Function to get the word length from the user """
-    while True: # While loop to ensure user will pick a word between 3 and 9
+    while True:
         try:
             word_length = int(input("Choose the length of the word you want to guess between 3 and 9: ")) # User chooses the length of the word he wants to guess
             if word_length < 3 or word_length > 9:
@@ -258,12 +257,12 @@ def get_word_length():
         
 def get_attempts():
     """ Function to get the number of attempts from the user """
-    while True: # While loop to ensure user will pick a number of attempts between 3 and 10
+    while True:
         try:
             attempts = int(input("Choose the number of attempts you want to have between 3 and 10: ")) # User chooses the number of attempts he wants to have
             if attempts < 3 or attempts > 10:
                 print("Invalid input. Please enter a number between 1 and 10.")
-                return get_attempts() # If user does anything but input a number between 3 and 10 it will prompt another input
+                return get_attempts()
             else:
                 return attempts
         except ValueError:
@@ -271,7 +270,7 @@ def get_attempts():
             return get_attempts()
     
 def play_game(user):
-    """ Function adds together the neccesary components to play the game """
+    """ Function adds together all the elements to play the game """
     word_length = get_word_length() # Get the word length from the user
     user_attempts = get_attempts() # Get the number of attempts from the user
     game = Wordle(user_attempts, word_length) # Initialize the game
@@ -279,10 +278,9 @@ def play_game(user):
     user.add_game(game) # Add the game to the user's game history
     user.add_game_result(game) # Update user's stats based on the game result
 
-
 def play_game_loop(user): 
     """This function enables the user to play again without going back to the menu screen"""
-    while True: # While loop to ensure the user only inputs either y or n
+    while True:
         play_game(user)
 
         play_again = input("Do you want to play again? (y/n): ") # Ask the user if he wants to play again
@@ -333,3 +331,4 @@ def main():
 if __name__ == "__main__":
     main()
 
+            
